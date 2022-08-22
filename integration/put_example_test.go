@@ -5,7 +5,6 @@ import (
 	"crypto/tls"
 	"crypto/x509"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"testing"
 
@@ -16,19 +15,16 @@ import (
 func createClient() *http.Client {
 	key, err := ioutil.ReadFile("../../vespa-config/pki/client/client.key")
 	if err != nil {
-		log.Println(err)
 		return nil
 	}
 
 	crt, err := ioutil.ReadFile("../../vespa-config/pki/client/client.pem")
 	if err != nil {
-		log.Println(err)
 		return nil
 	}
 
 	ca, err := ioutil.ReadFile("../../vespa-config/pki/vespa/ca-vespa.pem")
 	if err != nil {
-		log.Println(err)
 		return nil
 	}
 	rootCAs := x509.NewCertPool()
@@ -36,7 +32,6 @@ func createClient() *http.Client {
 
 	cert, err := tls.X509KeyPair(crt, key)
 	if err != nil {
-		log.Println(err)
 		return nil
 	}
 	tls := &tls.Config{
