@@ -1,10 +1,10 @@
 package integration
 
 import (
-	"reflect"
 	"testing"
 
 	"github.com/clubo-app/govespa"
+	"github.com/stretchr/testify/assert"
 )
 
 type testUser struct {
@@ -33,7 +33,6 @@ func TestQuery(t *testing.T) {
 	}
 
 	exp := testUser{Username: "john.doe", Firstname: "John", Lastname: "Doe"}
-	if !reflect.DeepEqual(*u, exp) {
-		t.Errorf("Expected %+v to equal %+v", *u, exp)
-	}
+
+	assert.Equal(t, exp, *u, "Should be equal")
 }

@@ -2,8 +2,9 @@ package govespa
 
 import (
 	"context"
-	"reflect"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestBindStruct(t *testing.T) {
@@ -65,9 +66,6 @@ func TestBindStruct(t *testing.T) {
 			WithContext(context.Background()).
 			BindStruct(table.s)
 
-		if !reflect.DeepEqual(p.fields, table.exp) {
-			t.Errorf("Expected %+v to equal %+v", p.fields, table.exp)
-		}
-
+		assert.Equal(t, table.exp, p.fields, "Should be equal")
 	}
 }

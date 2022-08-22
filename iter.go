@@ -2,6 +2,8 @@ package govespa
 
 import (
 	"errors"
+	"fmt"
+	"reflect"
 
 	"github.com/mitchellh/mapstructure"
 )
@@ -27,11 +29,35 @@ func (i *iter) Get(dest any) error {
 	if err != nil {
 		return err
 	}
-	d.Decode(i.res[0])
+	err = d.Decode(i.res[0])
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
 // Select scans all results into a destination, which must be a pointer to a slice.
-func (i *iter) Select(dest any) {
+func (i *iter) Select(dest any) error {
+	value := reflect.ValueOf(dest)
 
+	if value.Kind() != reflect.Ptr {
+		return fmt.Errorf("expected a pointer but got %T", dest)
+	}
+	if value.IsNil() {
+		return errors.New("expected a pointer but got nil")
+	}
+
+	d, err := mapstructure.NewDecoder(&mapstructure.DecoderConfig{
+		Result:  dest,
+		TagName: "vespa",
+	})
+	if err != nil {
+		return err
+	}
+
+	err = d.Decode(i.res)
+	if err != nil {
+		return err
+	}
+	return nil
 }

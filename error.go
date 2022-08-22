@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"errors"
 	"io"
-	"log"
 	"net/http"
 )
 
@@ -53,7 +52,6 @@ func parseError(resp *http.Response) *vespaError {
 	e.StatusCode = resp.StatusCode
 
 	bb, err := io.ReadAll(resp.Body)
-	log.Println(string(bb))
 	if err != nil {
 		return fromError(err)
 	}

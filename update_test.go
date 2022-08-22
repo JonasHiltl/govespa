@@ -2,8 +2,9 @@ package govespa
 
 import (
 	"encoding/json"
-	"reflect"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestAssign(t *testing.T) {
@@ -42,9 +43,7 @@ func TestAssign(t *testing.T) {
 			Update(DocumentId{}).
 			Assign(table.in.field, table.in.value)
 
-		if !reflect.DeepEqual(u.fields, table.exp) {
-			t.Errorf("Expected %+v to equal %+v", u.fields, table.exp)
-		}
+		assert.Equal(t, table.exp, u.fields, "Should be equal")
 	}
 }
 
@@ -84,9 +83,7 @@ func TestIncrement(t *testing.T) {
 			Update(DocumentId{}).
 			Increment(table.in.field, table.in.value)
 
-		if !reflect.DeepEqual(u.fields, table.exp) {
-			t.Errorf("Expected %+v to equal %+v", u.fields, table.exp)
-		}
+		assert.Equal(t, table.exp, u.fields, "Should be equal")
 	}
 }
 
@@ -126,9 +123,7 @@ func TestDecrement(t *testing.T) {
 			Update(DocumentId{}).
 			Decrement(table.in.field, table.in.value)
 
-		if !reflect.DeepEqual(u.fields, table.exp) {
-			t.Errorf("Expected %+v to equal %+v", u.fields, table.exp)
-		}
+		assert.Equal(t, table.exp, u.fields, "Should be equal")
 	}
 }
 
@@ -168,9 +163,7 @@ func TestMultiply(t *testing.T) {
 			Update(DocumentId{}).
 			Multiply(table.in.field, table.in.value)
 
-		if !reflect.DeepEqual(u.fields, table.exp) {
-			t.Errorf("Expected %+v to equal %+v", u.fields, table.exp)
-		}
+		assert.Equal(t, table.exp, u.fields, "Should be equal")
 	}
 }
 
@@ -210,9 +203,7 @@ func TestDivide(t *testing.T) {
 			Update(DocumentId{}).
 			Divide(table.in.field, table.in.value)
 
-		if !reflect.DeepEqual(u.fields, table.exp) {
-			t.Errorf("Expected %+v to equal %+v", u.fields, table.exp)
-		}
+		assert.Equal(t, table.exp, u.fields, "Should be equal")
 	}
 }
 
@@ -252,9 +243,7 @@ func TestAdd(t *testing.T) {
 			Update(DocumentId{}).
 			Add(table.in.field, table.in.value)
 
-		if !reflect.DeepEqual(u.fields, table.exp) {
-			t.Errorf("Expected %+v to equal %+v", u.fields, table.exp)
-		}
+		assert.Equal(t, table.exp, u.fields, "Should be equal")
 	}
 }
 
@@ -294,9 +283,7 @@ func TestAddWeightedSet(t *testing.T) {
 			Update(DocumentId{}).
 			AddWeightedSet(table.in.field, table.in.value)
 
-		if !reflect.DeepEqual(u.fields, table.exp) {
-			t.Errorf("Expected %+v to equal %+v", u.fields, table.exp)
-		}
+		assert.Equal(t, table.exp, u.fields, "Should be equal")
 	}
 }
 
@@ -322,9 +309,7 @@ func TestRemove(t *testing.T) {
 			Update(DocumentId{}).
 			Remove(table.field)
 
-		if !reflect.DeepEqual(u.fields, table.exp) {
-			t.Errorf("Expected %+v to equal %+v", u.fields, table.exp)
-		}
+		assert.Equal(t, table.exp, u.fields, "Should be equal")
 	}
 }
 
