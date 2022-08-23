@@ -37,7 +37,7 @@ func TestGet(t *testing.T) {
 
 	for _, table := range tables {
 		dest := new(testUser)
-		i := iter{
+		i := scanner{
 			res: table.input,
 		}
 		err := i.Get(dest)
@@ -79,7 +79,7 @@ func TestSelect(t *testing.T) {
 
 	for _, table := range tables {
 		dest := make([]testUser, 2)
-		i := iter{
+		i := scanner{
 			res: table.input,
 		}
 		err := i.Select(&dest)

@@ -10,7 +10,7 @@ import (
 
 type Query struct {
 	client  *VespaClient
-	iter    iter
+	iter    scanner
 	ctx     context.Context
 	yql     string
 	options QueryParameter
@@ -72,7 +72,7 @@ func (q *Query) Get(dest any) (QueryResponse, []vespaError) {
 
 	if dest != nil {
 		fields := getFieldsFromChildren(res.Root.Children)
-		i := iter{
+		i := scanner{
 			res: fields,
 		}
 		i.Get(dest)

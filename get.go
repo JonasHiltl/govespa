@@ -11,7 +11,7 @@ import (
 
 type Get struct {
 	client *VespaClient
-	iter   iter
+	iter   scanner
 	ctx    context.Context
 	params GetParameter
 	id     DocumentId
@@ -59,7 +59,7 @@ func (g *Get) Exec(dest any) (GetResponse, *vespaError) {
 		return GetResponse{}, fromError(err)
 	}
 
-	i := iter{
+	i := scanner{
 		res: []map[string]any{res.Fields},
 	}
 	err = i.Get(dest)
