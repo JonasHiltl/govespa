@@ -55,11 +55,10 @@ c := govespa.NewClient(govespa.NewClientParams{
 Have a look at the [integration](integration/) folder to see examples.
 
 #### TODO
-- [ ] Extend the [iter](iter.go) struct to be able to reexecute a Query/Get/Update/Remove with a different continuation token
 - [ ] Extend the DocumentId with the key/value pair section
 - [ ] Decide where and how to use concurrency 
 - [ ] Improve the `ParseDocId` function, current benchmark can be seen in [documentid_test.go](documentid_test.go)
-- [ ] Design a System to make Batching intuitive
+- [ ] Implement an Iterator which can be used for "update where", "visit", "delete where". It can either be a single struct used by Update/Get/Delete/Query but that may be harder to implement than just defining the logic for every instance separately.
 
 #### Disclaimer 
 > This client implementation is work in progress and not an official client created by the Team [@vespa](https://github.com/vespa-engine).
