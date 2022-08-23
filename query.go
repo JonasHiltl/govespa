@@ -41,9 +41,28 @@ func (q *Query) AddParameter(p QueryParameter) *Query {
 	return q
 }
 
-// Executes the query and scans the returned fields into a destination
-// dest needs to be a pointer
+// Get scans the first result into a destination.
+// The destination needs to be a pointer to a struct which fields are annotated with the "vespa" Tag.
 func (q *Query) Get(dest any) (QueryResponse, []vespaError) {
+	res, vErr := q.fetch()
+	if vErr != nil {
+		return QueryResponse{}, []vespaError{*vErr}
+	}
+	if len(res.Root.Errors) > 0 {
+		return QueryResponse{}, res.Root.Errors
+	}
+
+	if dest != nil {
+		fields := getFieldsFromChildren(res.Root.Children)
+		i := scanner{
+			res: fields,
+		}
+		i.Get(dest)
+	}
+	return res, nil
+}
+
+func (q *Query) fetch() (QueryResponse, *vespaError) {
 	query := url.Values{}
 	q.options.addQueryToParams(query)
 	query.Add("yql", q.yql)
@@ -56,26 +75,14 @@ func (q *Query) Get(dest any) (QueryResponse, []vespaError) {
 		body:   nil,
 	})
 	if err != nil {
-		return QueryResponse{}, []vespaError{*fromError(err)}
+		return QueryResponse{}, fromError(err)
 	}
 	defer resp.Body.Close()
 
 	res := new(QueryResponse)
 	err = json.NewDecoder(resp.Body).Decode(res)
 	if err != nil {
-		return QueryResponse{}, []vespaError{*fromError(err)}
-	}
-
-	if len(res.Root.Errors) > 0 {
-		return QueryResponse{}, res.Root.Errors
-	}
-
-	if dest != nil {
-		fields := getFieldsFromChildren(res.Root.Children)
-		i := scanner{
-			res: fields,
-		}
-		i.Get(dest)
+		return QueryResponse{}, fromError(err)
 	}
 	return *res, nil
 }

@@ -41,6 +41,23 @@ func (r *Get) AddParameter(p GetParameter) *Get {
 }
 
 func (g *Get) Exec(dest any) (GetResponse, *vespaError) {
+	res, vErr := g.fetch()
+	if vErr != nil {
+		return GetResponse{}, vErr
+	}
+
+	i := scanner{
+		res: []map[string]any{res.Fields},
+	}
+	err := i.Get(dest)
+	if err != nil {
+		return GetResponse{}, fromError(err)
+	}
+
+	return res, nil
+}
+
+func (g *Get) fetch() (GetResponse, *vespaError) {
 	resp, err := g.client.executeRequest(executeRequestParams{
 		ctx:    g.ctx,
 		path:   g.id.toPath(),
@@ -58,20 +75,7 @@ func (g *Get) Exec(dest any) (GetResponse, *vespaError) {
 	if err != nil {
 		return GetResponse{}, fromError(err)
 	}
-
-	i := scanner{
-		res: []map[string]any{res.Fields},
-	}
-	err = i.Get(dest)
-	if err != nil {
-		return GetResponse{}, fromError(err)
-	}
 	return *res, nil
-}
-
-// TODO: implement visiting with continuation token through the iterator
-func (g *Get) Visit() {
-
 }
 
 func (p GetParameter) getQuery() (q url.Values) {

@@ -52,7 +52,7 @@ func (r *Remove) ByDocumentId() *vespaError {
 	return nil
 }
 
-// TODO: implement "Delete Where" should also be done through iteration
+// TODO: implement "Delete Where" should be done through iteration
 
 func (params RemoveParams) getQuery() (q url.Values) {
 	if params.condition != "" {
