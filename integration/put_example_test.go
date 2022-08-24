@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/clubo-app/govespa"
+	"github.com/jonashiltl/govespa"
 	"golang.org/x/net/http2"
 )
 

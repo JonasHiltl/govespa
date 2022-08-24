@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	"github.com/clubo-app/govespa"
+	"github.com/jonashiltl/govespa"
 )
 
 func TestUpdate(t *testing.T) {

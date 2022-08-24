@@ -3,7 +3,7 @@ package integration
 import (
 	"testing"
 
-	"github.com/clubo-app/govespa"
+	"github.com/jonashiltl/govespa"
 )
 
 func TestGet(t *testing.T) {
