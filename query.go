@@ -9,11 +9,12 @@ import (
 )
 
 type Query struct {
-	client  *VespaClient
-	iter    scanner
-	ctx     context.Context
-	yql     string
-	options QueryParameter
+	client    *VespaClient
+	iter      scanner
+	ctx       context.Context
+	yql       string
+	options   QueryParameter
+	variables map[string]any
 }
 
 // groupingSessionCache is a pointer so that we can distinguish between true/false/not defined
@@ -33,6 +34,13 @@ func (q *Query) WithContext(c context.Context) *Query {
 
 func (q *Query) AddYQL(yql string) *Query {
 	q.yql = yql
+	return q
+}
+
+// AddVariables can be used to add any kind of key/value pair to the query.
+// For example, AddVariable("ranking", "rank_albums") would select "rank_albums" as the Ranking Profile.
+func (q *Query) AddVariable(key string, value any) *Query {
+	q.variables[key] = value
 	return q
 }
 

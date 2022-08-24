@@ -31,7 +31,7 @@ func (r *Remove) AddParameter(p RemoveParams) *Remove {
 	return r
 }
 
-func (r *Remove) ByDocumentId() *vespaError {
+func (r *Remove) Exec() *vespaError {
 	resp, err := r.client.executeRequest(executeRequestParams{
 		ctx:    r.ctx,
 		path:   r.id.toPath(),

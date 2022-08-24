@@ -28,7 +28,7 @@ func (e *vespaError) Error() string {
 	return e.Message
 }
 
-func (e *vespaError) toError() error {
+func (e *vespaError) ToError() error {
 	return errors.New(e.Message)
 }
 
