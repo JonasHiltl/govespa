@@ -15,7 +15,7 @@ type DocumentId struct {
 // Current benchmarks on m1 Macbook
 // goos: darwin
 // goarch: arm64
-// pkg: github.com/clubo-app/govespa
+// pkg: github.com/jonashiltl/govespa
 // BenchmarkParseDocId-8   	31781857	        37.31 ns/op
 
 // TODO: cleean this mess up
