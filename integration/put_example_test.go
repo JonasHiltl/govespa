@@ -12,27 +12,27 @@ import (
 	"golang.org/x/net/http2"
 )
 
-func createClient() *http.Client {
-	key, err := ioutil.ReadFile("../../vespa-config/pki/client/client.key")
+func createClient() (*http.Client, error) {
+	key, err := ioutil.ReadFile("../../../clubo-app/vespa-config/pki/client/client.key")
 	if err != nil {
-		return nil
+		return nil, err
 	}
 
-	crt, err := ioutil.ReadFile("../../vespa-config/pki/client/client.pem")
+	crt, err := ioutil.ReadFile("../../../clubo-app/vespa-config/pki/client/client.pem")
 	if err != nil {
-		return nil
+		return nil, err
 	}
 
-	ca, err := ioutil.ReadFile("../../vespa-config/pki/vespa/ca-vespa.pem")
+	ca, err := ioutil.ReadFile("../../../clubo-app/vespa-config/pki/vespa/ca-vespa.pem")
 	if err != nil {
-		return nil
+		return nil, err
 	}
 	rootCAs := x509.NewCertPool()
 	rootCAs.AppendCertsFromPEM(ca)
 
 	cert, err := tls.X509KeyPair(crt, key)
 	if err != nil {
-		return nil
+		return nil, err
 	}
 	tls := &tls.Config{
 		Certificates: []tls.Certificate{cert},
@@ -45,14 +45,14 @@ func createClient() *http.Client {
 		AllowHTTP:       false,
 	}
 
-	return &http.Client{Transport: trns}
+	return &http.Client{Transport: trns}, nil
 
 }
 
 func TestPut(t *testing.T) {
-	client := createClient()
-	if client == nil {
-		t.Fatal("Error creating Http Client")
+	client, err := createClient()
+	if err != nil {
+		t.Fatal(err)
 	}
 
 	c := govespa.NewClient(govespa.NewClientParams{
@@ -64,7 +64,7 @@ func TestPut(t *testing.T) {
 	fname := "John"
 	lname := "Doe"
 
-	apiErr := c.
+	err = c.
 		Put(govespa.DocumentId{
 			Namespace:    "default",
 			DocType:      "user",
@@ -77,7 +77,7 @@ func TestPut(t *testing.T) {
 			"lastname":  lname,
 		}).
 		Exec()
-	if apiErr != nil {
-		t.Error(apiErr)
+	if err != nil {
+		t.Error(err)
 	}
 }

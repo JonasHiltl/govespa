@@ -55,7 +55,7 @@ type putBody struct {
 	Condition string         `json:"condition"`
 }
 
-func (p *Put) Exec() *vespaError {
+func (p *Put) Exec() error {
 	b := putBody{
 		Fields:    p.fields,
 		Condition: p.params.condition,
@@ -63,7 +63,7 @@ func (p *Put) Exec() *vespaError {
 
 	body, err := json.Marshal(b)
 	if err != nil {
-		return fromError(err)
+		return err
 	}
 
 	resp, err := p.client.executeRequest(executeRequestParams{
@@ -75,13 +75,13 @@ func (p *Put) Exec() *vespaError {
 		body:    bytes.NewReader(body),
 	})
 	if err != nil {
-		return fromError(err)
+		return err
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode > 299 {
 		err := parseError(resp)
-		return err
+		return err.ToError()
 	}
 
 	return nil

@@ -51,13 +51,13 @@ func (q *Query) AddParameter(p QueryParameter) *Query {
 
 // Get scans the first result into a destination.
 // The destination needs to be a pointer to a struct which fields are annotated with the "vespa" Tag.
-func (q *Query) Get(dest any) (QueryResponse, []vespaError) {
-	res, vErr := q.fetch()
-	if vErr != nil {
-		return QueryResponse{}, []vespaError{*vErr}
+func (q *Query) Get(dest any) (QueryResponse, error) {
+	res, err := q.fetch()
+	if err != nil {
+		return QueryResponse{}, err
 	}
 	if len(res.Root.Errors) > 0 {
-		return QueryResponse{}, res.Root.Errors
+		return QueryResponse{}, res.Root.Errors[0].ToError()
 	}
 
 	if dest != nil {
@@ -70,7 +70,7 @@ func (q *Query) Get(dest any) (QueryResponse, []vespaError) {
 	return res, nil
 }
 
-func (q *Query) fetch() (QueryResponse, *vespaError) {
+func (q *Query) fetch() (QueryResponse, error) {
 	query := url.Values{}
 	q.options.addQueryToParams(query)
 	query.Add("yql", q.yql)
@@ -83,7 +83,7 @@ func (q *Query) fetch() (QueryResponse, *vespaError) {
 		body:   nil,
 	})
 	if err != nil {
-		return QueryResponse{}, fromError(err)
+		return QueryResponse{}, err
 	}
 	defer resp.Body.Close()
 

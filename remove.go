@@ -31,7 +31,7 @@ func (r *Remove) AddParameter(p RemoveParams) *Remove {
 	return r
 }
 
-func (r *Remove) Exec() *vespaError {
+func (r *Remove) Exec() error {
 	resp, err := r.client.executeRequest(executeRequestParams{
 		ctx:    r.ctx,
 		path:   r.id.toPath(),
@@ -40,13 +40,13 @@ func (r *Remove) Exec() *vespaError {
 		body:   nil,
 	})
 	if err != nil {
-		return fromError(err)
+		return err
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode > 299 {
 		err := parseError(resp)
-		return err
+		return err.ToError()
 	}
 
 	return nil
@@ -68,5 +68,4 @@ func (params RemoveParams) getQuery() (q url.Values) {
 		q.Add("tracelevel", strconv.FormatUint(uint64(params.tracelevel), 10))
 	}
 	return
-
 }

@@ -8,9 +8,9 @@ import (
 )
 
 func TestRemove(t *testing.T) {
-	client := createClient()
-	if client == nil {
-		t.Fatal("Error creating Http Client")
+	client, err := createClient()
+	if err != nil {
+		t.Fatal(err)
 	}
 
 	c := govespa.NewClient(govespa.NewClientParams{
@@ -24,10 +24,10 @@ func TestRemove(t *testing.T) {
 		UserSpecific: "awgaw-1w234a-dw14ag-w1414a",
 	}
 
-	err := c.
+	err = c.
 		Remove(id).
 		WithContext(context.Background()).
-		ByDocumentId()
+		Exec()
 	if err != nil {
 		t.Error(err)
 	}

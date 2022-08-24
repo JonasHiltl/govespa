@@ -15,6 +15,15 @@ type scanner struct {
 // Get scans the first result into a destination.
 // The destination needs to be a pointer to a struct which fields are annotated with the "vespa" Tag.
 func (i *scanner) Get(dest any) error {
+	value := reflect.ValueOf(dest)
+
+	if value.Kind() != reflect.Ptr {
+		return fmt.Errorf("expected a pointer but got %T", dest)
+	}
+	if value.IsNil() {
+		return errors.New("expected a pointer but got nil")
+	}
+
 	if i.res == nil || len(i.res) == 0 {
 		return errors.New("Fields are empty")
 	}

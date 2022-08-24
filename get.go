@@ -3,11 +3,14 @@ package govespa
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/url"
 	"strconv"
 	"time"
 )
+
+var ErrNoDoc = errors.New("no document found")
 
 type Get struct {
 	client *VespaClient
@@ -40,16 +43,19 @@ func (r *Get) AddParameter(p GetParameter) *Get {
 	return r
 }
 
-func (g *Get) Exec(dest any) (GetResponse, *vespaError) {
-	res, vErr := g.fetch()
-	if vErr != nil {
-		return GetResponse{}, vErr
+func (g *Get) Exec(dest any) (GetResponse, error) {
+	res, err := g.fetch()
+	if err != nil {
+		return GetResponse{}, err
+	}
+	if len(res.Fields) == 0 {
+		return GetResponse{}, ErrNoDoc
 	}
 
 	i := scanner{
 		res: []map[string]any{res.Fields},
 	}
-	err := i.Get(dest)
+	err = i.Get(dest)
 	if err != nil {
 		return GetResponse{}, fromError(err)
 	}
@@ -57,7 +63,7 @@ func (g *Get) Exec(dest any) (GetResponse, *vespaError) {
 	return res, nil
 }
 
-func (g *Get) fetch() (GetResponse, *vespaError) {
+func (g *Get) fetch() (GetResponse, error) {
 	resp, err := g.client.executeRequest(executeRequestParams{
 		ctx:    g.ctx,
 		path:   g.id.toPath(),
@@ -66,14 +72,14 @@ func (g *Get) fetch() (GetResponse, *vespaError) {
 		body:   nil,
 	})
 	if err != nil {
-		return GetResponse{}, fromError(err)
+		return GetResponse{}, err
 	}
 	defer resp.Body.Close()
 
 	res := new(GetResponse)
 	err = json.NewDecoder(resp.Body).Decode(res)
 	if err != nil {
-		return GetResponse{}, fromError(err)
+		return GetResponse{}, err
 	}
 	return *res, nil
 }

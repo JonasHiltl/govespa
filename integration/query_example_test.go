@@ -14,17 +14,18 @@ type testUser struct {
 }
 
 func TestQuery(t *testing.T) {
-	client := createClient()
-	if client == nil {
-		t.Fatal("Error creating Http Client")
+	client, err := createClient()
+	if err != nil {
+		t.Fatal(err)
 	}
+
 	c := govespa.NewClient(govespa.NewClientParams{
 		HttpClient: client,
 		BaseUrl:    "https://localhost:8090",
 	})
 
 	u := new(testUser)
-	_, err := c.
+	_, err = c.
 		Query().
 		AddYQL(`select * from user where default contains "joh"`).
 		Get(u)

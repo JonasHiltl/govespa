@@ -8,9 +8,9 @@ import (
 )
 
 func TestUpdate(t *testing.T) {
-	client := createClient()
-	if client == nil {
-		t.Fatal("Error creating Http Client")
+	client, err := createClient()
+	if err != nil {
+		t.Fatal(err)
 	}
 
 	c := govespa.NewClient(govespa.NewClientParams{
@@ -18,7 +18,7 @@ func TestUpdate(t *testing.T) {
 		BaseUrl:    "https://localhost:8090",
 	})
 
-	err := c.
+	err = c.
 		Update(govespa.DocumentId{
 			Namespace:    "default",
 			DocType:      "user",
