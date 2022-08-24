@@ -1,4 +1,4 @@
-module github.com/clubo-app/govespa
+module github.com/jonashiltl/govespa
 
 go 1.19
 
