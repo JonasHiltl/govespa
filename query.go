@@ -15,7 +15,7 @@ type Query struct {
 	iter      scanner
 	ctx       context.Context
 	yql       string
-	options   QueryParameter
+	params    QueryParameter
 	variables url.Values
 }
 
@@ -47,7 +47,7 @@ func (q *Query) AddVariable(key string, value string) *Query {
 }
 
 func (q *Query) AddParameter(p QueryParameter) *Query {
-	q.options = p
+	q.params = p
 	return q
 }
 
@@ -90,7 +90,7 @@ func (q *Query) fetch() (QueryResponse, error) {
 
 	query.Add("yql", q.yql)
 	maps.Copy(query, q.variables)
-	maps.Copy(query, q.options.getQuery())
+	maps.Copy(query, q.params.getQuery())
 
 	resp, err := q.client.executeRequest(executeRequestParams{
 		ctx:    q.ctx,
@@ -112,7 +112,9 @@ func (q *Query) fetch() (QueryResponse, error) {
 	return *res, nil
 }
 
-func (p QueryParameter) getQuery() (q url.Values) {
+func (p QueryParameter) getQuery() url.Values {
+	q := url.Values{}
+
 	if p.Offset != 0 {
 		q.Add("offset", strconv.FormatUint(p.Offset, 10))
 	}
@@ -131,5 +133,5 @@ func (p QueryParameter) getQuery() (q url.Values) {
 	if p.Timeout != 0 {
 		q.Add("timeout", strconv.FormatInt(p.Timeout.Milliseconds(), 10))
 	}
-	return
+	return q
 }
