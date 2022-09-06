@@ -1,6 +1,6 @@
 ## govespa 
 
-Govespa is a WIP client implementation for the [vespa-engine](https://github.com/vespa-engine). It uses the Document Api over http/2 and it's goal is to support all functionality exposed by the Document Api.
+Govespa is a client implementation for the [vespa-engine](https://github.com/vespa-engine). It uses the Document Api and can be used over http or http/2, since you can supply your own `http.Client`. It's goal is to support all functionalities exposed by the Document Api.
 
 #### Features
 - `Put`: writes a Document by ID and allows binding a `struct`/`map` to the document fields. 
@@ -11,9 +11,9 @@ Govespa is a WIP client implementation for the [vespa-engine](https://github.com
 
 #### Getting Started
 ```
-go get github.com/jonashiltl/govespa
+go get -u github.com/jonashiltl/govespa
 ```
-Create an `http.Client` with your TLS certificates
+Create an `http.Client`, for http/2 add your TLS Certificates.
 ```go
 key, err := ioutil.ReadFile("client.key")
 ...
