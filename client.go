@@ -52,7 +52,8 @@ func (v *VespaClient) Update(docId DocumentId) *Update {
 
 func (v *VespaClient) Query() *Query {
 	s := &Query{
-		client: v,
+		client:    v,
+		variables: make(map[string]any),
 	}
 	return s
 }
