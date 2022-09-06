@@ -21,12 +21,12 @@ type Query struct {
 
 // groupingSessionCache is a pointer so that we can distinguish between true/false/not defined
 type QueryParameter struct {
-	offset               uint64
-	hits                 uint32
-	queryProfile         string
-	groupingSessionCache *bool
-	searchChain          string
-	timeout              time.Duration
+	Offset               uint64
+	Hits                 uint32
+	QueryProfile         string
+	GroupingSessionCache *bool
+	SearchChain          string
+	Timeout              time.Duration
 }
 
 func (q *Query) WithContext(c context.Context) *Query {
@@ -113,23 +113,23 @@ func (q *Query) fetch() (QueryResponse, error) {
 }
 
 func (p QueryParameter) getQuery() (q url.Values) {
-	if p.offset != 0 {
-		q.Add("offset", strconv.FormatUint(p.offset, 10))
+	if p.Offset != 0 {
+		q.Add("offset", strconv.FormatUint(p.Offset, 10))
 	}
-	if p.hits != 0 {
-		q.Add("hits", strconv.FormatUint(uint64(p.hits), 10))
+	if p.Hits != 0 {
+		q.Add("hits", strconv.FormatUint(uint64(p.Hits), 10))
 	}
-	if p.queryProfile != "" {
-		q.Add("queryProfile", p.queryProfile)
+	if p.QueryProfile != "" {
+		q.Add("queryProfile", p.QueryProfile)
 	}
-	if p.groupingSessionCache != nil {
-		q.Add("groupingSessionCache", strconv.FormatBool(*p.groupingSessionCache))
+	if p.GroupingSessionCache != nil {
+		q.Add("groupingSessionCache", strconv.FormatBool(*p.GroupingSessionCache))
 	}
-	if p.searchChain != "" {
-		q.Add("searchChain", p.searchChain)
+	if p.SearchChain != "" {
+		q.Add("searchChain", p.SearchChain)
 	}
-	if p.timeout != 0 {
-		q.Add("timeout", strconv.FormatInt(p.timeout.Milliseconds(), 10))
+	if p.Timeout != 0 {
+		q.Add("timeout", strconv.FormatInt(p.Timeout.Milliseconds(), 10))
 	}
 	return
 }
