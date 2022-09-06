@@ -6,6 +6,8 @@ import (
 	"net/url"
 	"strconv"
 	"time"
+
+	"golang.org/x/exp/maps"
 )
 
 type Query struct {
@@ -14,7 +16,7 @@ type Query struct {
 	ctx       context.Context
 	yql       string
 	options   QueryParameter
-	variables map[string]any
+	variables url.Values
 }
 
 // groupingSessionCache is a pointer so that we can distinguish between true/false/not defined
@@ -39,8 +41,8 @@ func (q *Query) AddYQL(yql string) *Query {
 
 // AddVariables can be used to add any kind of key/value pair to the query.
 // For example, AddVariable("ranking", "rank_albums") would select "rank_albums" as the Ranking Profile.
-func (q *Query) AddVariable(key string, value any) *Query {
-	q.variables[key] = value
+func (q *Query) AddVariable(key string, value string) *Query {
+	q.variables.Add(key, value)
 	return q
 }
 
@@ -72,8 +74,10 @@ func (q *Query) Get(dest any) (QueryResponse, error) {
 
 func (q *Query) fetch() (QueryResponse, error) {
 	query := url.Values{}
-	q.options.addQueryToParams(query)
+
 	query.Add("yql", q.yql)
+	maps.Copy(query, q.variables)
+	maps.Copy(query, q.options.getQuery())
 
 	resp, err := q.client.executeRequest(executeRequestParams{
 		ctx:    q.ctx,
@@ -115,10 +119,4 @@ func (p QueryParameter) getQuery() (q url.Values) {
 		q.Add("timeout", strconv.FormatInt(p.timeout.Milliseconds(), 10))
 	}
 	return
-}
-
-func (p QueryParameter) addQueryToParams(params url.Values) {
-	for k, v := range p.getQuery() {
-		params.Add(k, v[0])
-	}
 }

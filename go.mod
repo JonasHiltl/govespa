@@ -6,6 +6,7 @@ require (
 	github.com/jmoiron/sqlx v1.3.5
 	github.com/mitchellh/mapstructure v1.5.0
 	github.com/stretchr/testify v1.8.0
+	golang.org/x/exp v0.0.0-20220827204233-334a2380cb91
 	golang.org/x/net v0.0.0-20220812174116-3211cb980234
 )
 
