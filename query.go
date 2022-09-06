@@ -51,7 +51,20 @@ func (q *Query) AddParameter(p QueryParameter) *Query {
 	return q
 }
 
-// Get scans the first result into a destination.
+// Exec runs the Query but doesn't scan the fields of the result into a destination.
+func (q *Query) Exec() (QueryResponse, error) {
+	res, err := q.fetch()
+	if err != nil {
+		return QueryResponse{}, err
+	}
+
+	if len(res.Root.Errors) > 0 {
+		return QueryResponse{}, res.Root.Errors[0].ToError()
+	}
+	return res, nil
+}
+
+// Get scans the fields of the first result/children into a destination.
 // The destination needs to be a pointer to a struct which fields are annotated with the "vespa" Tag.
 func (q *Query) Get(dest any) (QueryResponse, error) {
 	res, err := q.fetch()
