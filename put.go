@@ -29,7 +29,8 @@ func (p *Put) AddParameter(param OperationalParams) *Put {
 }
 
 // BindStruct adds all values of the struct with the tag `vespa:"field_name"` to the fields object of the Put Request.
-// use `vespa:"-" to exclude the value in the fields object`
+// use `vespa:"-" to exclude the value in the fields object`.
+// Empty fields are ignored.
 func (p *Put) BindStruct(s any) *Put {
 	v := reflect.ValueOf(s)
 	for v = reflect.ValueOf(s); v.Kind() == reflect.Ptr; {
@@ -37,7 +38,9 @@ func (p *Put) BindStruct(s any) *Put {
 	}
 	fm := p.mapper.FieldMap(v)
 	for k, v := range fm {
-		p.fields[k] = v.Interface()
+		if !v.IsZero() {
+			p.fields[k] = v.Interface()
+		}
 	}
 	return p
 }

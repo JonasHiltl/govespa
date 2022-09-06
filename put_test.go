@@ -20,6 +20,7 @@ func TestBindStruct(t *testing.T) {
 				Firstname string `vespa:"firstname"`
 				Lastname  string `vespa:"lastname"`
 				Hidden    string `vespa:"-"`
+				Ignored   string `vespa:"ignored"`
 			}{
 				Username:  "john.doe",
 				Firstname: "John",
