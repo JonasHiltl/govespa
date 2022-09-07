@@ -85,6 +85,27 @@ func (q *Query) Get(dest any) (QueryResponse, error) {
 	return res, nil
 }
 
+// Select scans the fiels of all results into a destination.
+// The destination needs to be a pointer to a slice of structs, annotated with the "vespa" Tag.
+func (q *Query) Select(dest any) (QueryResponse, error) {
+	res, err := q.fetch()
+	if err != nil {
+		return QueryResponse{}, err
+	}
+	if len(res.Root.Errors) > 0 {
+		return QueryResponse{}, res.Root.Errors[0].ToError()
+	}
+
+	if dest != nil {
+		fields := getFieldsFromChildren(res.Root.Children)
+		i := scanner{
+			res: fields,
+		}
+		i.Select(dest)
+	}
+	return res, nil
+}
+
 func (q *Query) fetch() (QueryResponse, error) {
 	query := url.Values{}
 
