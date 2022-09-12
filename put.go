@@ -5,7 +5,6 @@ import (
 	"context"
 	"encoding/json"
 	"log"
-	"reflect"
 
 	"github.com/mitchellh/mapstructure"
 )
@@ -29,13 +28,12 @@ func (p *Put) AddParameter(param OperationalParams) *Put {
 }
 
 // BindStruct adds all values of the struct with the tag `vespa:"field_name"` to the fields object of the Put Request.
-// use `vespa:"-" to exclude the value in the fields object`.
-// Empty fields are ignored.
+//
+// Use `vespa:"-"` to exclude the value in the fields object.
+// Use `vespa:",omitempty"` to ignore the field if values if the default value.
 func (p *Put) BindStruct(s any) *Put {
-	res := make(map[string]any)
-
 	d, err := mapstructure.NewDecoder(&mapstructure.DecoderConfig{
-		Result:  &res,
+		Result:  &p.fields,
 		TagName: "vespa",
 	})
 	if err != nil {
@@ -45,12 +43,6 @@ func (p *Put) BindStruct(s any) *Put {
 	err = d.Decode(s)
 	if err != nil {
 		log.Println(err)
-	}
-
-	for k, v := range res {
-		if v != nil && !reflect.ValueOf(v).IsZero() {
-			p.fields[k] = v
-		}
 	}
 
 	return p
