@@ -2,10 +2,8 @@ package govespa
 
 import (
 	"context"
-	"fmt"
 	"io"
 	"net/http"
-	"net/http/httputil"
 	"net/url"
 	"strconv"
 	"time"
@@ -96,9 +94,6 @@ func (v *VespaClient) executeRequest(params executeRequestParams) (*http.Respons
 	if err != nil {
 		return nil, err
 	}
-
-	dr, _ := httputil.DumpRequest(req, false)
-	fmt.Println(string(dr))
 
 	if params.query != nil {
 		req.URL.RawQuery = params.query.Encode()
