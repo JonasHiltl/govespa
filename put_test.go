@@ -56,6 +56,28 @@ func TestBindStruct(t *testing.T) {
 				"tags": []string{"club", "houseparty", "bar"},
 			},
 		},
+		{
+			s: struct {
+				Location struct {
+					Lat float64 `vespa:"lat"`
+					Lon float64 `vespa:"lon"`
+				} `vespa:"location"`
+			}{
+				Location: struct {
+					Lat float64 `vespa:"lat"`
+					Lon float64 `vespa:"lon"`
+				}{
+					Lat: 54.23423,
+					Lon: 8.1212,
+				},
+			},
+			exp: map[string]any{
+				"location": map[string]any{
+					"lat": 54.23423,
+					"lon": 8.1212,
+				},
+			},
+		},
 	}
 
 	for _, table := range tables {

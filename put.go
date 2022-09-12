@@ -4,9 +4,10 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"log"
 	"reflect"
 
-	"github.com/jmoiron/sqlx/reflectx"
+	"github.com/mitchellh/mapstructure"
 )
 
 type Put struct {
@@ -15,7 +16,6 @@ type Put struct {
 	id     DocumentId
 	fields map[string]any
 	params OperationalParams
-	mapper *reflectx.Mapper
 }
 
 func (p *Put) WithContext(c context.Context) *Put {
@@ -32,16 +32,27 @@ func (p *Put) AddParameter(param OperationalParams) *Put {
 // use `vespa:"-" to exclude the value in the fields object`.
 // Empty fields are ignored.
 func (p *Put) BindStruct(s any) *Put {
-	v := reflect.ValueOf(s)
-	for v = reflect.ValueOf(s); v.Kind() == reflect.Ptr; {
-		v = v.Elem()
+	res := make(map[string]any)
+
+	d, err := mapstructure.NewDecoder(&mapstructure.DecoderConfig{
+		Result:  &res,
+		TagName: "vespa",
+	})
+	if err != nil {
+		log.Println(err)
 	}
-	fm := p.mapper.FieldMap(v)
-	for k, v := range fm {
-		if !v.IsZero() {
-			p.fields[k] = v.Interface()
+
+	err = d.Decode(s)
+	if err != nil {
+		log.Println(err)
+	}
+
+	for k, v := range res {
+		if v != nil && !reflect.ValueOf(v).IsZero() {
+			p.fields[k] = v
 		}
 	}
+
 	return p
 }
 

@@ -2,13 +2,13 @@ package govespa
 
 import (
 	"context"
+	"fmt"
 	"io"
 	"net/http"
+	"net/http/httputil"
 	"net/url"
 	"strconv"
 	"time"
-
-	"github.com/jmoiron/sqlx/reflectx"
 )
 
 type VespaClient struct {
@@ -35,7 +35,6 @@ func (v *VespaClient) Put(docId DocumentId) *Put {
 	p := &Put{
 		client: v,
 		id:     docId,
-		mapper: reflectx.NewMapperFunc("vespa", func(s string) string { return s }),
 		fields: make(map[string]any),
 	}
 	return p
@@ -97,6 +96,9 @@ func (v *VespaClient) executeRequest(params executeRequestParams) (*http.Respons
 	if err != nil {
 		return nil, err
 	}
+
+	dr, _ := httputil.DumpRequest(req, false)
+	fmt.Println(string(dr))
 
 	if params.query != nil {
 		req.URL.RawQuery = params.query.Encode()
